@@ -6,8 +6,8 @@
 
 ## 18th Eurographics Workshop on Graphics and Cultural Heritage
 We represented our findings on this research project at 18th Eurographics Workshop on Graphics and Cultural Heritage.
-- Abstract: [](http://diglib.eg.org/bitstream/handle/10.2312/gch20201297/083-083.pdf?sequence=1&isAllowed=y)
-- Poster: [](https://www.gch2020.eu/wp-content/uploads/2020/11/paper1013-poster.pdf)
+- [Abstract](http://diglib.eg.org/bitstream/handle/10.2312/gch20201297/083-083.pdf?sequence=1&isAllowed=y)
+- [Poster](https://www.gch2020.eu/wp-content/uploads/2020/11/paper1013-poster.pdf)
 
 ## Project Team
 - Selim Balcısoy
