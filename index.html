@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>BAVLAB|Warqfs of Crete Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+
+  <!-- Include Airship.js -->
+  <link rel="stylesheet" href="https://libs.cartocdn.com/airship-style/v2.4.0/airship.css">
+  <script type="module" src="https://libs.cartocdn.com/airship-components/v2.4.0/airship/airship.esm.js"></script>
+  <script nomodule="" src="https://libs.cartocdn.com/airship-components/v2.4.0/airship/airship.js"></script>
+
+  <!-- Include Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  <link href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" rel="stylesheet">
+
+  <!-- Include CARTO.js -->
+  <script src="https://libs.cartocdn.com/carto.js/v4.2.0/carto.min.js"></script>
+  <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
+
+  <!-- Include AJAX-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
+  <!-- For Autocomplete-->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.core.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js" integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk=" crossorigin="anonymous"></script>
+
+  <style>
+    .body {
+      zoom: 90%;
+    }
+  </style>
+</head>
+
+<body class="as-app-body as-app">
+  <div class="as-app">
+    <header class="as-toolbar" style="background-color: black;" style="zoom: 80%;">
+      <div class="as-toolbar__item as-title" style="color: #FFFDFF;">Waqfs of Crete</div>
+      <div class="as-toolbar__item">
+        <input type="text" placeholder="Search Bar" class="form-control mr-sm-2"  value="" id="search">
+        <button id="refreshPage" button type="button" class="btn btn-outline-success type=" submit" onClick="refreshPage()">Refresh</button>
+      </div>
+    </header>
+
+
+    <as-responsive-content>
+
+
+      <main class="as-main">
+        <div class="as-map-area">
+          <div id="map">
+
+          </div>
+
+
+          <div class="as-map-panels" data-name="Panels" >
+            <div class="as-panel as-panel--top as-panel--right" style=" border: 5px; border-style: solid; border-color: black;" >
+              <div class="as-panel__element" id="result-list">
+                <section class="as-box">
+                  <h1 class="as-title" align="center">Waqfs of Crete</h1>
+                  <p class="as-body">
+                    This archive consists of official records of Muslim inhabitants of Crete who moved to Turkey during the 1920s as a result of the population exchange between Turkey and Greece. Documents spanning the period from 1825 to 1928 in
+                    Ottoman
+                    Turkish and Greek provide an opportunity to examine the multi-layered social structure on the island, especially from a cultural and economic point of view. This collection also includes a small number of records from other Greek
+                    centers such as Rhodes, Lesbos, Thessaloniki, Kavala, and Alexandroupolis.
+                  </p>
+
+                </section>
+
+
+              </div>
+            </div>
+
+
+
+            <!-- as-panel--vertical code starts here -->
+            <div class="as-panel as-panel--vertical as-panel--top as-panel--left" style="zoom:80%;" data-name="Info">
+              <div class="as-panel__element as-box" style="border: 2px; border-style: solid; border-color: black;">
+                <div id="controls" align="center">
+                  <h4 class="as-title" align="center">Person Info</h4>
+                  <select class="as-dropdown" id="kisi" style="width:100%;max-width:90%;">
+                    <option value="">Not Selected</option>
+                  </select>
+                </div>
+              </div>
+              <div class="as-panel__element as-box" style="border: 2px; border-style: solid; border-color: black; ">
+                <div id="controls" align="center">
+                  <h4 class="as-title" align="center">Keyword</h4>
+                  <select class="as-dropdown" id="anahtar" style="width:100%;max-width:90%;">
+                    <option value="">Not Selected</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="as-panel as-panel--bottom as-panel--left" style="zoom:80%;">
+
+              <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModal2">Legend</button>
+
+            </div>
+          </div>
+
+        </div>
+
+
+
+
+
+        <section class="as-toolbar" style="background-color: black; zoom:90%;">
+          <div class="as-toolbar__item as-title" style="color: #FFFDFF">Filters</div>
+          <div class="as-toolbar__item as-title" id="totalNumber" style="height: auto ; width:auto;"></div>
+        </section>
+
+
+        <div class="as-map-footer"  data-name="Filters">
+          <section class="as-box as-box--border">
+            <as-category-widget show-clear id="typeCat" class="as-box" option="button">
+              <p class="as-title" align="center">City</p>
+            </as-category-widget>
+          </section>
+          <section class="as-box as-box--border">
+            <as-category-widget show-clear id="typeCat2" class="as-box">
+              <p class="as-title" align="center">Topic</p>
+            </as-category-widget>
+          </section>
+          <section class="as-box as-box--border">
+
+            <as-category-widget show-clear id="typeCat3" class="as-box">
+              <p class="as-title" align="center">Record Belongs To</p>
+            </as-category-widget>
+
+          </section>
+
+          <section class="as-box as-box--border">
+            <as-category-widget show-clear id="typeCat4" class="as-box">
+              <p class="as-title" align="center">Language</p>
+            </as-category-widget>
+          </section>
+
+          <section class="as-box as-box--border">
+            <as-category-widget show-clear id="typeCat5" class="as-box">
+              <p class="as-title" align="center">Type</p>
+            </as-category-widget>
+
+          </section>
+
+
+          <section class="as-box as-box--border">
+            <as-histogram-widget show-header="false" class="as-box">
+              <p class="as-title" align="center">Year</p>
+            </as-histogram-widget>
+
+          </section>
+
+
+
+        </div>
+
+
+      </main>
+
+
+    </as-responsive-content>
+  </div>
+
+  <div class="modal" id="myModal" tabindex="-1">
+    <div class="modal-dialog modal-lg" style="width:100%;">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h3 class="modal-title w-100">Research University Lab 2020 - BAVLAB</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+
+          <p style="font-size:18px;">The "Research University Lab 2020" project, carried out by Digilogue and SALT together, aims to transform written and visual documents focused on
+            art, design, economy and society issues from the late 19th century to new
+            applications by combining them with high technology. In this context,
+            <a href="http://analyticslab.sabanciuniv.edu" target="_blank">BAVLAB (Sabancı University)</a> carried out a web project that reveals the
+            relationship between SALT Research Cretan Foundations Archive
+            documents, which have more than 9 thousand records, by examining them
+            according to categories such as date, place, subject, genre and language.</p>
+
+<hr>
+          <p style="font-size:18px;">Also, we represented our findings on this research project at 18th Eurographics Workshop on Graphics and Cultural Heritage</p>
+          <p style="font-size:20px;"><strong><em><a href="https://www.gch2020.eu/wp-content/uploads/2020/11/paper1013-poster.pdf" target="_blank">A NLP Enchance Visual Analytics Tool for Archive Metadata</a></em></strong></p>
+
+
+
+
+
+<hr>
+          <h5>Project Team</h5>
+          <div class="row" style="text-align: center;">
+
+            <div class="col-3">
+              <img src="data:image/jpeg;base64,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" alt="selim-balcisoy-img" style="width: 90%;" class="rounded-circle">
+              <p>Selim Balcısoy</p>
+            </div>
+            <div class="col-3">
+                            <img src="https://media-exp1.licdn.com/dms/image/C4D03AQFB84YdjAnTMw/profile-displayphoto-shrink_200_200/0/1608150902452?e=1619049600&v=beta&t=xATSgDEZS47_T63aDVHFpiH_5JQqW191o5DvXVbL1vE" alt="dilara-mustecep-img" style="width: 90%;" class="rounded-circle">
+              <p>Dilara Müstecep</p>
+            </div>
+            <div class="col-3">
+              <img src="data:image/jpeg;base64,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" alt="anil-ozdemir-img" style="width: 90%;" class="rounded-circle">
+              <p>Anıl Özdemir</p>
+            </div>
+            <div class="col-3">
+              <img src="https://media-exp1.licdn.com/dms/image/C4E03AQGt4zRyzuajhA/profile-displayphoto-shrink_400_400/0/1607427764492?e=1619049600&v=beta&t=i867V56t3aqabMIZqVWP_56rmGfpvidrmjrVZczZQms" alt="dilara-mustecep-img" style="width: 90%;" class="rounded-circle">
+<p>Orhan Ağaoğlu</p>
+            </div>
+
+          </div>
+          <hr>
+          <section class="container-fluid" align="center">
+            <div class="row">
+              <div class="col-1">
+
+              </div>
+              <img class="col-10" src="http://analyticslab.sabanciuniv.edu/wp-content/uploads/2016/11/bavlab-header-w.png" alt="" style="width: 80%; background-color: black;">
+            </div>
+            <div class="col-1">
+
+            </div>
+            <div class="row" style="margin-top: 20px;">
+              <div class="col-1">
+
+              </div>
+              <img class="col-5" style="max-width: 40%;" src="https://www.digilogue.com/wp-content/uploads/2019/10/digilogue-logo-1.png" alt="digilogue-logo">
+              <img class="col-5" style="max-width: 40%;" src="https://yenibirlider.org/wp-content/uploads/2018/05/salt-logo.png" alt="bavlab-logo">
+              <div class="col-1">
+
+              </div>
+            </div>
+
+
+          </section>
+
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal2" role="dialog" style="text-align: center;">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Legend</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Colours indicates which city document belongs to</p>
+          <ul align="center" style="white-space:nowrap">
+            <div class="circle" style="background: #FE4A49;">Chania</div>
+            <div class="circle" style="background: #96BB7C;">Rethymno</div>
+            <div class="circle" style="background: #4A4E4D;">Unspecified Cities</div>
+            <div class="circle" style="background: #0392CF;">Cities Outside of Crete</div>
+            <div class="circle" style="background: #FE8A71;">Iraklion</div>
+            <div class="circle" style="background: #F6CD61;">Lasithi</div>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</body>
+<script type="text/javascript">
+  function refreshPage() {
+    window.location.reload();
+  }
+  $(window).on('load', function() {
+    $('#myModal').modal('show');
+  });
+
+  function refreshPage() {
+    window.location.reload();
+  }
+
+  function Similarity(title, id, score, url) {
+    this.title = title;
+    this.id = id;
+    this.score = score;
+    this.url = url;
+  };
+
+  function Search(title, id, url, kisi, zaman, lokasyon, entities, anahtar, taxonomy, renk) {
+    this.title = title;
+    this.id = id;
+    this.url = url;
+    this.kisi = kisi;
+    this.zaman = zaman;
+    this.lokasyon = lokasyon;
+    this.entities = entities;
+    this.anahtar = anahtar;
+    this.taxonomy = taxonomy;
+    this.renk = renk;
+  };
+
+  function Id(id, title) {
+    this.id = id;
+    this.title = title;
+  }
+
+
+  // ---------------------------------------
+  //      PART - 1: MAP CONFIGURATION
+  // ---------------------------------------
+  const map = L.map('map', {
+    zoomControl: false
+  }).setView([36.500, 25.200], 7);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+  }).addTo(map);
+
+
+
+  // ---------------------------------------
+  //    PART - 2: CARTO AUTHENTICATION
+  // ---------------------------------------
+  client = new carto.Client({
+    apiKey: 'a308fd0d7fb8b700e08bcaffb025100678eae9c6',
+    username: 'dilaramsustecep'
+  });
+
+
+  // ---------------------------------------
+  //          PART - 3: MAP LAYERS
+  // ---------------------------------------
+  // MAIN layer
+  const MainSource = new carto.source.SQL('SELECT * FROM main_layer');
+  const MainStyle = new carto.style.CartoCSS(`
+  #layer {
+  marker-width: 6;
+  marker-line-color: #CAC9C9;
+  marker-fill: ramp([city], (#FE4A49, #4A4E4D ,#0392CF ,#FE8A71,#F6CD61,#96BB7C), ("Chania", "Unspecified Cities", "Cities Outside of Crete", "Iraklion","Lasithi","Rethymno"), "=",category);
+  }`);
+  const MainLayer = new carto.layer.Layer(MainSource, MainStyle, {
+    featureOverColumns: ['title', 'url', 'language', '_id', 'kisi_bilgisi', 'zaman_bilgisi', 'entities', 'anahtar_kelimeler', 'lokasyon_bilgisi', 'taxonomy_rank', 'colors']
+  });
+
+
+
+  // CITY NAME layer
+  const CitySource = new carto.source.Dataset('city_name');
+  const CityStyle = new carto.style.CartoCSS(`
+  #layer {
+      marker-width: 10;
+      marker-fill: #ff0800;
+      marker-fill-opacity: 0.9;
+      marker-file: url('https://s3.amazonaws.com/com.cartodb.users-assets.production/maki-icons/cross-18.svg');
+      marker-allow-overlap: true;
+      marker-line-width: 1;
+      marker-line-color: #FFFFFF;
+      marker-line-opacity: 1;
+    }
+    #layer::labels {
+      text-name: [name];
+      text-face-name: 'DejaVu Sans Book';
+      text-size: 15;
+      text-fill: #2e393e;
+      text-label-position-tolerance: 0;
+      text-halo-radius: 0;
+      text-halo-fill: #848383;
+      text-dy: -10;
+      text-allow-overlap: false;
+      text-placement: point;
+      text-placement-type: dummy;
+    }`);
+  const CityLayer = new carto.layer.Layer(CitySource, CityStyle);
+
+
+
+  // SIMILARITY layer
+  const SimilaritySource = new carto.source.SQL('SELECT * FROM similarity_layer');
+  const SimilarityStyle = new carto.style.CartoCSS(`
+  #layer {
+  line-width: 2;
+  line-color: #9A2DFA;
+  line-opacity: 1;
+  }`);
+  const SimilarityLayer = new carto.layer.Layer(SimilaritySource, SimilarityStyle);
+
+
+
+  // TAXONOMY layer
+  const KisiNetworkSource = new carto.source.SQL('SELECT * FROM graph_kisiler');
+  const KisiNetworkStyle = new carto.style.CartoCSS(`
+  #layer {
+    line-width: 1.5;
+    line-color: ramp([score], (#d53e4f, #fc8d59, #fee08b, #ffffbf, #e6f598, #99d594, #3288bd), equal);
+  }
+  #layer::labels {
+    text-name: [score];
+    text-face-name: 'DejaVu Sans Book';
+    text-size: 10;
+    text-fill: #FFFFFF;
+    text-label-position-tolerance: 0;
+    text-halo-radius: 1;
+    text-halo-fill: #6F808D;
+    text-dy: -10;
+    text-allow-overlap: false;
+    text-placement: point;
+    text-placement-type: dummy;
+  }`);
+  const KisiGraphLayer = new carto.layer.Layer(KisiNetworkSource, KisiNetworkStyle);
+
+
+  const AnahtarNetworkSource = new carto.source.SQL('SELECT * FROM graph_anahtarlar');
+  const AnahtarNetworkStyle = new carto.style.CartoCSS(`
+  #layer {
+    line-width: 1.5;
+    line-color: ramp([score], (#d53e4f, #fc8d59, #fee08b, #ffffbf, #e6f598, #99d594, #3288bd), equal);
+  }
+  #layer::labels {
+    text-name: [score];
+    text-face-name: 'DejaVu Sans Book';
+    text-size: 10;
+    text-fill: #FFFFFF;
+    text-label-position-tolerance: 0;
+    text-halo-radius: 1;
+    text-halo-fill: #6F808D;
+    text-dy: -10;
+    text-allow-overlap: false;
+    text-placement: point;
+    text-placement-type: dummy;
+  }`);
+  const AnahtarGraphLayer = new carto.layer.Layer(AnahtarNetworkSource, AnahtarNetworkStyle);
+
+
+
+
+  client.addLayers([MainLayer, CityLayer, SimilarityLayer, KisiGraphLayer, AnahtarGraphLayer]);
+  SimilarityLayer.hide();
+  KisiGraphLayer.hide();
+  AnahtarGraphLayer.hide();
+  client.getLeafletLayer().addTo(map);
+
+
+
+  // ---------------------------------------
+  //          PART - 4: DATAVIEWS
+  // ---------------------------------------
+
+  const NumberOfDocuments = new carto.dataview.Formula(MainSource, 'cartodb_id', {
+    operation: carto.operation.COUNT
+  });
+
+  NumberOfDocuments.on('dataChanged', data => {
+    document.getElementById('totalNumber').innerHTML = JSON.parse(JSON.stringify(data)).result + ' documents on display';;
+  });
+
+  client.addDataview(NumberOfDocuments);
+
+  function filling_data(toBeFilled, newData) {
+
+    toBeFilled.forEach((item1) => {
+
+      var match = false;
+      newData.forEach((item2) => {
+
+        if (item1.name == item2.name) {
+          item1.value = item2.value;
+          match = true;
+        }
+      });
+
+      if (match == false) {
+        item1.value = 0;
+      }
+    });
+
+    return toBeFilled;
+
+  };
+
+
+
+  // CITY dataview
+  var CityWidget = document.getElementById('typeCat');
+  CityWidget.categories = [ // 1. predefined list
+    {
+      name: 'Chania',
+      value: 4176
+    },
+    {
+      name: 'Lasithi',
+      value: 2011
+    },
+    {
+      name: 'Iraklion',
+      value: 1219
+    },
+    {
+      name: 'Rethymno',
+      value: 1054
+    },
+    {
+      name: 'Unspecified Cities',
+      value: 989
+    },
+    {
+      name: 'Cities Outside of Crete',
+      value: 689
+    },
+  ];
+
+
+  const CityView = new carto.dataview.Category(MainSource, 'city');
+  var temp_city = CityWidget.categories; // current var
+
+  CityView.on('dataChanged', function(newData) {
+    var result = JSON.stringify(newData, null, 4);
+    var obj = JSON.parse(result).categories;
+
+    CityWidget.categories = filling_data(temp_city, obj).categories;
+  });
+
+  CityView.on('dataChanged', function(newData) {
+    CityWidget.categories = temp_city;
+
+  });
+
+  const CityFilter = new carto.filter.Category('city', {});
+  MainSource.addFilter(CityFilter);
+
+
+  CityWidget.addEventListener('categoriesSelected', (event) => {
+    CityFilter.setFilters({
+      in: event.detail
+    });
+  });
+
+
+
+
+  // TOPIC dataview
+  const TopicWidget = document.getElementById('typeCat2');
+  TopicWidget.categories = [ // 1. predefined list
+    {
+      name: 'Personnel',
+      value: 2268
+    },
+    {
+      name: 'Orphans',
+      value: 2078
+    },
+    {
+      name: 'Finance',
+      value: 1847
+    },
+    {
+      name: 'Properties',
+      value: 1337
+    },
+    {
+      name: 'Families',
+      value: 653
+    },
+    {
+      name: 'Others',
+      value: 1964
+    },
+  ];
+
+
+  const TopicView = new carto.dataview.Category(MainSource, 'subject');
+  var temp_topic = TopicWidget.categories;
+
+  TopicView.on('dataChanged', function(newData) {
+
+    var result = JSON.stringify(newData, null, 4);
+    var obj = JSON.parse(result).categories; // current data "usable"
+
+    TopicWidget.categories = filling_data(temp_topic, obj).categories;
+  });
+
+  TopicView.on('dataChanged', function(newData) {
+    TopicWidget.categories = temp_topic;
+  });
+
+  const TopicFilter = new carto.filter.Category('subject', {});
+  MainSource.addFilter(TopicFilter);
+
+  TopicWidget.addEventListener('categoriesSelected', (event) => {
+    TopicFilter.setFilters({
+      in: event.detail
+    });
+  });
+
+
+
+
+
+
+
+
+
+  // BELONG dataview
+  const BelongsWidget = document.getElementById('typeCat3');
+  BelongsWidget.categories = [ // 1. predefined list
+    {
+      name: 'Pious foundation',
+      value: 9342
+    },
+    {
+      name: 'Government',
+      value: 781
+    },
+    {
+      name: 'unknown',
+      value: 24
+    },
+  ];
+
+  const BelongsView = new carto.dataview.Category(MainSource, 'whose_record');
+  var temp_belong = BelongsWidget.categories;
+
+
+  BelongsView.on('dataChanged', function(newData) {
+
+    var result = JSON.stringify(newData, null, 4);
+    var obj = JSON.parse(result).categories; // current data "usable"
+
+    BelongsWidget.categories = filling_data(temp_belong, obj).categories;
+
+  });
+
+  BelongsView.on('dataChanged', function(newData) {
+    BelongsWidget.categories = temp_belong;
+  });
+
+  const BelongsFilter = new carto.filter.Category('whose_record', {});
+  MainSource.addFilter(BelongsFilter);
+
+  BelongsWidget.addEventListener('categoriesSelected', (event) => {
+    BelongsFilter.setFilters({
+      in: event.detail
+    });
+  });
+
+
+
+  // LANGUAGE dataview
+  const LanguageWidget = document.getElementById('typeCat4');
+  LanguageWidget.categories = [ // 1. predefined list
+    {
+      name: 'Osmanlı Türkçesi - Ottoman Turkish',
+      value: 10147
+    },
+  ];
+
+
+  const LanguageView = new carto.dataview.Category(MainSource, 'language');
+  var temp_language = LanguageWidget.categories;
+
+  LanguageView.on('dataChanged', function(newData) {
+
+    var result = JSON.stringify(newData, null, 4);
+    var obj = JSON.parse(result).categories; // current data "usable"
+
+    LanguageWidget.categories = filling_data(temp_language, obj).categories;
+
+  });
+
+  LanguageView.on('dataChanged', function(newData) {
+
+    LanguageWidget.categories = temp_language;
+  });
+
+  const LanguageFilter = new carto.filter.Category('language', {});
+  MainSource.addFilter(LanguageFilter);
+
+  LanguageWidget.addEventListener('categoriesSelected', (event) => {
+    LanguageFilter.setFilters({
+      in: event.detail
+    });
+  });
+
+
+
+
+
+
+  // TYPE dataview
+  const TypeWidget = document.getElementById('typeCat5');
+  TypeWidget.categories = [ // 1. predefined list
+    {
+      name: 'Belge - Document',
+      value: 5843
+    },
+    {
+      name: '',
+      value: 3908
+    },
+    {
+      name: 'Defter - Register',
+      value: 393
+    },
+    {
+      name: 'Kitap - Book',
+      value: 3
+    },
+  ];
+
+
+  const TypeView = new carto.dataview.Category(MainSource, 'type');
+  var temp_type = TypeWidget.categories;
+
+  TypeView.on('dataChanged', function(newData) {
+
+    var result = JSON.stringify(newData, null, 4);
+    var obj = JSON.parse(result).categories; // current data "usable"
+
+    TypeWidget.categories = filling_data(temp_type, obj).categories;
+
+  });
+
+
+  TypeView.on('dataChanged', function(newData) {
+
+    TypeWidget.categories = temp_type;
+  });
+
+  const TypeFilter = new carto.filter.Category('type', {});
+  MainSource.addFilter(TypeFilter);
+
+  TypeWidget.addEventListener('categoriesSelected', (event) => {
+    TypeFilter.setFilters({
+      in: event.detail
+    });
+  });
+
+
+
+  // YEAR dataview
+  var YearWidget = document.querySelector('as-histogram-widget');
+  YearWidget.xAxisOptions = {
+    format: (value) => `${value}`,
+    values: [1820, 1850, 1880, 1910, 1940, 1970],
+  };
+  YearWidget.tooltipFormatter = function(data) {
+    return YearWidget.defaultFormatter(data).then((formatted) => {
+      formatted[0] = `${Math.round(data.start)} - ${Math.round(data.end)}`;
+      return formatted;
+    });
+  };
+
+  YearWidget.data = [{
+      start: 1824,
+      end: 1834,
+      value: 3
+    },
+    {
+      start: 1834,
+      end: 1844,
+      value: 10
+    },
+    {
+      start: 1844,
+      end: 1854,
+      value: 17
+    },
+    {
+      start: 1854,
+      end: 1864,
+      value: 56
+    },
+    {
+      start: 1864,
+      end: 1874,
+      value: 309
+    },
+    {
+      start: 1874,
+      end: 1884,
+      value: 638
+    }, //638
+    {
+      start: 1884,
+      end: 1894,
+      value: 3234
+    },
+    {
+      start: 1894,
+      end: 1904,
+      value: 2050
+    },
+    {
+      start: 1904,
+      end: 1914,
+      value: 1695
+    },
+    {
+      start: 1914,
+      end: 1924,
+      value: 1617
+    },
+    {
+      start: 1924,
+      end: 1934,
+      value: 54
+    },
+  ];
+
+
+  var YearView = new carto.dataview.Histogram(MainSource, 'year', {
+    bins: 11,
+    start: 1824,
+    end: 1934
+  });
+  var obj;
+
+  YearView.on('dataChanged', histogramData => {
+
+    obj = JSON.parse(JSON.stringify(histogramData)).bins;
+
+    for (var i = 0; i < obj.length; i++) {
+      delete obj[i].bin;
+      delete obj[i].avg;
+      delete obj[i].max;
+      delete obj[i].min;
+      delete obj[i].normalized;
+
+      obj[i]['value'] = obj[i]['freq'];
+      delete obj[i].freq;
+
+    }
+
+    YearWidget.data = obj;
+
+  });
+
+  const YearFilter = new carto.filter.Range('year', {});
+  MainSource.addFilter(YearFilter);
+
+  YearWidget.addEventListener('selectionChanged', (event) => {
+    YearFilter.setFilters({
+      between: {
+        min: event.detail.selection[0],
+        max: event.detail.selection[1] - 1
+      }
+    });
+  });
+
+
+
+  client.addDataviews([CityView, TopicView, BelongsView, LanguageView, TypeView, YearView]);
+
+
+
+  // ---------------------------------------
+  //          PART - 5: DROPDOWN
+  // ---------------------------------------
+  const KisiSource = new carto.source.Dataset('kisiler');
+  const kisiDataview = new carto.dataview.Category(KisiSource, 'kisi', {
+    limit: 28400
+  });
+
+  kisiDataview.on('dataChanged', data => {
+    const kisiler = data.categories.map(category => category.name).sort(); //name needs to stay
+    var kisi_query = `SELECT * FROM  main_layer WHERE _id IN (SELECT _id FROM kisiler WHERE kisi=`;
+    refreshDropdown('kisi', kisiler, kisi_query, 'Person Info', 'graph_kisiler');
+  });
+
+
+
+
+
+  function filterByNetwork(admin, dataFrame) {
+
+    const taxonomy_query = `SELECT * FROM ${dataFrame} WHERE _from =\'${admin}\'`;
+
+    if (dataFrame == "graph_kisiler") {
+
+      KisiNetworkSource.setQuery(taxonomy_query);
+    } else {
+      AnahtarNetworkSource.setQuery(taxonomy_query);
+    }
+
+
+    const main_query = `SELECT * FROM main_layer WHERE _id IN (SELECT _to FROM ${dataFrame} WHERE _from=\'${admin}\') `;
+    MainSource.setQuery(main_query);
+
+
+
+    var sql = cartodb.SQL({
+      user: 'dilaramsustecep'
+    });
+
+    sql.execute(main_query).done(function(data) {
+
+      var foundsArray = [];
+      var results = data.rows; // take all the rows resulting dataframe
+
+      if (results.length > 0) {
+        _.each(results, function(result, index, results) { // for each continent apply funtion
+          foundsArray.push(new Search(result["title"], result["cartodb_id"], result["url"], result["kisi_bilgisi"], result["zaman_bilgisi"], result["lokasyon_bilgisi"], result["entities"], result["anahtar_kelimeler"], result[
+            "taxonomy_rank"], result["colors"]));
+        }); // create new
+
+
+        var resultFound = results.length;
+        $('#result-list').empty();
+        $("#result-list").append('<section class="as-box"><h1 class="as-title" align="center" style="background-color: #FEC619;">Network Documents</h1></section>');
+
+
+        _.each(foundsArray, function(result, index, results) {
+          $("#result-list").append('<section class="as-box"><h3 class="as-subheader"> <a href="' + result["url"] + '" target="_blank">' + result["title"] + '</a> </h3> ' +
+            '<p class="as-body"> <b><u>Person Info:</b></u> ' + result["kisi"] + '</p>' +
+            '<p class="as-body"> <b><u>Time Info:</b></u> ' + result["zaman"] + '</p>' +
+            '<p class="as-body"> <b><u>Location Info:</b></u> ' + result["lokasyon"] + '</p>' +
+            '<p class="as-body"> <b><u>Entities:</b></u> ' + result["entities"] + '</p>' +
+            '<p class="as-body"> <b><u>Keywords:</b></u> ' + result["anahtar"] + '</p>' +
+            '<span class="as-badge as-bg--badge-blue" style="background-color:' + result["renk"] + '"><p class="as-body"> <b><u>Taxonomy Rank:</b></u> </p> ' + result["taxonomy"] + '</span>' +
+
+            '</section>');
+        });
+      } else {
+        alert("CAUTION !!! \nIf the number of documents in the network is over 100, it is not shown due to performance problems.");
+      }
+
+
+    });
+
+    if (dataFrame == "graph_kisiler") {
+
+      KisiGraphLayer.show();
+    } else {
+      AnahtarGraphLayer.show();
+    } //TaxonomyLayer.show(); // needs to change
+
+  }
+
+
+
+  function refreshDropdown(elementID, adminNames, query, resultFrom, dataFrame) {
+
+
+
+    const countriesDom = document.getElementById(elementID);
+    countriesDom.onchange = event => {
+      const admin = event.target.value;
+
+      var result = query.concat(`\'${admin}\') `);
+      filterBy(admin, result, resultFrom, dataFrame);
+
+      // MAYBE WE NEED CHANGE
+      KisiGraphLayer.hide();
+      AnahtarGraphLayer.hide();
+    };
+
+    adminNames.forEach(admin => {
+      const option = document.createElement('option');
+      option.innerHTML = admin;
+      option.value = admin;
+      countriesDom.appendChild(option);
+    });
+  }
+
+
+
+  function filterBy(admin, query, resultFrom, dataFrame) {
+
+    var resultsArray = [];
+
+
+
+    MainSource.setQuery(query);
+    var sql = cartodb.SQL({
+      user: 'dilaramsustecep'
+    });
+
+    sql.execute(query).done(function(data) {
+      var foundsArray = [];
+      var results = data.rows; // take all the rows resulting dataframe
+
+
+      _.each(results, function(result, index, results) { // for each continent apply funtion
+        foundsArray.push(new Search(result["title"], result["_id"], result["url"], result["kisi_bilgisi"], result["zaman_bilgisi"], result["lokasyon_bilgisi"], result["entities"], result["anahtar_kelimeler"], result["taxonomy_rank"],
+          result["colors"]));
+      }); // create new
+
+
+      var resultFound = results.length;
+      $('#result-list').empty();
+      $("#result-list").append('<section class="as-box"><h1 class="as-title" align="center" style="background-color: #FEC619;">' + resultFrom + '<br><u><i>' + admin + '<u></i></h1></section>');
+
+
+      _.each(foundsArray, function(result, index, results) {
+        console.log(result["id"]);
+        $("#result-list").append('<section class="as-box"><h3 class="as-subheader"> <a href="' + result["url"] + '" target="_blank">' + result["title"] + '</a> </h3> ' +
+          '<p class="as-body"> <b><u>Person Info:</b></u> ' + result["kisi"] + '</p>' +
+          '<p class="as-body"> <b><u>Time Info:</b></u> ' + result["zaman"] + '</p>' +
+          '<p class="as-body"> <b><u>Location Info:</b></u> ' + result["lokasyon"] + '</p>' +
+          '<p class="as-body"> <b><u>Entities:</b></u> ' + result["entities"] + '</p>' +
+          '<p class="as-body"> <b><u>Keywords:</b></u> ' + result["anahtar"] + '</p>' +
+          '<span class="as-badge as-bg--badge-blue" style="background-color:' + result["renk"] + '"><p class="as-body"> <b><u>Taxonomy Rank:</b></u> </p> ' + result["taxonomy"] + '</span>' +
+          '<button class="as-btn as-btn--primary as-m--4" onclick="filterByNetwork(\'' + result["id"] + '\',\'' + dataFrame + '\')">Network</button>' +
+          '</section>');
+      });
+
+    });
+
+
+  }
+
+  //<button class="as-btn as-btn--primary as-m--4" onclick="filterByNetwork(\''+result["id"]+'\')">Network</button>
+
+  const AnahtarSource = new carto.source.Dataset('anahtar_kelimeler');
+  const anahtarDataview = new carto.dataview.Category(AnahtarSource, 'anahtar_kelime', {
+    limit: 28400
+  });
+
+  anahtarDataview.on('dataChanged', data => {
+
+    const anahtarlar = data.categories.map(category => category.name).sort(); //name needs to stay
+
+    var anahtar_query = `SELECT * FROM  main_layer WHERE _id IN (SELECT _id FROM anahtar_kelimeler WHERE anahtar_kelime=`;
+    refreshDropdown('anahtar', anahtarlar, anahtar_query, 'Anahtar Kelimeler', 'graph_anahtarlar');
+  });
+
+
+  client.addDataviews([kisiDataview, anahtarDataview]);
+
+  // ---------------------------------------
+  // ---------------------------------------
+  //         PART - 7: SEARCH BAR
+  // ---------------------------------------
+  // ---------------------------------------
+
+  var sql = cartodb.SQL({
+    user: 'dilaramsustecep'
+  });
+
+  $('#search').autocomplete({
+    source: function(request, response) {
+
+      var term = "";
+      var char = "";
+      for (var i = 0; i < request.term.length; i++) {
+        char = request.term.charAt(i);
+        if (char != "'") {
+          term += char;
+        } else {
+          term += char + "'";
+        }
+
+      }
+
+
+      sql.execute("select * from main_layer where title ilike '" + "%" + term + "%" + "' ORDER BY taxonomy_rank DESC").done(function(data) {
+        // buraya title'lar ve title'lar href şeklinde olucak
+        var foundsArray = [];
+        MainSource.setQuery("select * from main_layer where title ilike '" + "%" + request.term + "%" + "' ORDER BY taxonomy_rank DESC");
+
+
+        var results = data.rows; // take all the rows resulting dataframe
+        _.each(results, function(result, index, results) { // for each continent apply funtion
+          foundsArray.push(new Search(result["title"], result["cartodb_id"], result["url"], result["kisi_bilgisi"], result["zaman_bilgisi"], result["lokasyon_bilgisi"], result["entities"], result["anahtar_kelimeler"], result[
+            "taxonomy_rank"], result["colors"]));
+        }); // create new
+
+        var resultFound = results.length;
+        console.log("Here 1");
+
+        $('#result-list').empty();
+        $("#result-list").append('<section class="as-box"><h1 class="as-title" align="center" style="background-color: #FEC619;">Search Results</h1></section>');
+        $("#result-list").append('<section class="as-box"><h3 class="as-subheader" align="center">' + resultFound + ' documents has found</h3> </section>');
+
+        _.each(foundsArray, function(result, index, results) {
+          $("#result-list").append('<section class="as-box"><h3 class="as-subheader"> <a href="' + result["url"] + '" target="_blank">' + result["title"] + '</a> </h3> ' +
+            '<p class="as-body"> <b><u>Person Info:</b></u> ' + result["kisi"] + '</p>' +
+            '<p class="as-body"> <b><u>Time Info:</b></u> ' + result["zaman"] + '</p>' +
+            '<p class="as-body"> <b><u>Location Infp:</b></u> ' + result["lokasyon"] + '</p>' +
+            '<p class="as-body"> <b><u>Entities:</b></u> ' + result["entities"] + '</p>' +
+            '<p class="as-body"> <b><u>Keywords:</b></u> ' + result["anahtar"] + '</p>' +
+            '<span class="as-badge as-bg--badge-blue" style="background-color:' + result["renk"] + '"><p class="as-body"> <b><u>Taxonomy Rank:</b></u> </p> ' + result["taxonomy"] + '</span>' +
+            '</section>');
+        });
+
+
+      })
+    },
+
+    minLength: 0,
+  });
+
+
+  function filterByID(admin) {
+
+    // PROBABLY NO PROBLEM
+    KisiGraphLayer.hide();
+    AnahtarGraphLayer.hide();
+
+    const main_query = `SELECT * FROM  main_layer WHERE _id IN (SELECT _to FROM similarity_layer WHERE _id=\'${admin}\') `;
+    MainSource.setQuery(main_query);
+
+    const similarity_query = `SELECT * FROM similarity_layer WHERE _id=\'${admin}\'`;
+    SimilaritySource.setQuery(similarity_query);
+
+    SimilarityLayer.show();
+
+
+    //For displaying on left-side box
+    var resultsArray = [];
+    var query = `SELECT * FROM similarity_layer WHERE _id=\'${admin}\' ORDER BY similarity DESC`;
+    var sql = cartodb.SQL({
+      user: 'dilaramsustecep'
+    });
+
+    sql.execute(query).done(function(data) {
+
+
+      var results = data.rows; // take all the rows resulting dataframe
+
+      _.each(results, function(result, index, results) { // for each continent apply funtion
+        resultsArray.push(new Similarity(result["title"], result["cartodb_id"], result["similarity"], result["url"]));
+      }); // create new
+
+      $('#result-list').empty();
+      $("#result-list").append('<section class="as-box"><h1 class="as-title" align="center" style="background-color: #FEC619;">Similar Documents</h1></section>');
+
+      _.each(resultsArray, function(result, index, results) {
+        $("#result-list").append('<section class="as-box">' +
+          '<h3 class="as-title">Similarity Score: ' + result["score"] + '</h3>' +
+          '<h4 class="as-subheader">' + '<a href="' + result["url"] + '" target="_blank">' + result["title"] + '</a></h4>' +
+
+
+          '</section>');
+      });
+      /* --- */
+
+    });
+
+
+
+  }
+
+  // ---------------------------------------
+  //          PART - 8: POP-UP'S
+  // ---------------------------------------
+  const popup = L.popup({
+    closeButton: false,
+
+  });
+
+  MainLayer.off('featureOver');
+  MainLayer.off('featureOut');
+  MainLayer.on('featureClicked', openPopup);
+
+
+  function openPopup(featureEvent) {
+
+
+    var id = featureEvent.data._id;
+
+    let content = '<div class="widget" style="zoom : 75%">';
+    content += `<h3 class="h3"> <a href="${featureEvent.data.url}" target="_blank">${featureEvent.data.title}</a></h3>`;
+    // Add title - add link here as well
+
+    content += `<ul>`;
+
+    if (featureEvent.data.language) {
+      content += `<li><p><b><u>Language:</u></b>    ${featureEvent.data.language}</p></li>`;
+    }
+
+    if (featureEvent.data.kisi_bilgisi) {
+      content += `<li> <p><b><u> Person Info:</b></u>    ${featureEvent.data.kisi_bilgisi}</p></li>`;
+    }
+    if (featureEvent.data.zaman_bilgisi) {
+      content += `<li> <p><b><u> Time Info:</b></u>    ${featureEvent.data.zaman_bilgisi}</p></li>`;
+    }
+    if (featureEvent.data.lokasyon_bilgisi) {
+      content += `<li><p><b><u> Location Info:</b></u>    ${featureEvent.data.lokasyon_bilgisi}</p></li>`;
+    }
+    if (featureEvent.data.entities) {
+      content += `<li><p><b><u> Entities:</b></u>    ${featureEvent.data.entities}</h4></li>`;
+    }
+    if (featureEvent.data.anahtar_kelimeler) {
+      content += `<li><p><b><u>Keywords:</b></u>    ${featureEvent.data.anahtar_kelimeler}</p></li>`;
+    }
+    if (featureEvent.data.taxonomy_rank) {
+      content += `<li><p><mark style='background-color:${featureEvent.data.colors}'><b><u>Taxomony Rank:</b></u>    ${featureEvent.data.taxonomy_rank}</mark></p></li>`;
+    }
+
+    content += `</ul>`;
+
+
+    content += '<button id="RelationButton"  class="as-btn as-btn--primary as-m--4">See Similar Documents</button></div>'; // needs more style
+
+    popup.setContent(content);
+    popup.setLatLng(featureEvent.latLng); // look for it
+    if (!popup.isOpen()) {
+      popup.openOn(map);
+      document.getElementById('RelationButton').addEventListener("click", function() {
+        filterByID(id);
+      });
+    }
+
+  }
+
+  function closePopup(featureEvent) {
+    popup.removeFrom(map);
+  }
+</script>
+
+</html>
